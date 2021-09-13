@@ -1,0 +1,72 @@
+'use strict';
+const express = require('express');
+const app = express();
+
+const cors = require('cors');
+app.use(cors());
+
+require('dotenv').config();
+
+const weatherData = require('./data/weather.json');
+const PORT = process.env.PORT;
+
+app.get('/', (req, res) => {
+
+  res.status(200).send('Working');
+});
+
+// app.get('/data',(req,res)=>{
+//   let city=weatherData[2];
+//   let forecastDays=city.data.map(day=>{
+//     return {
+//       date:day.valid_date,
+//       description:day.weather.description
+//     };
+//   });
+//   let customRespone={
+//     forecast:forecastDays,
+//     city_name:city.city_name
+//   };
+//   res.status(200).json(customRespone);
+// });
+
+app.get('/weather', (req, res) => {
+  let searchQuery = req.query.searchQuery;
+  let lat = parseFloat(req.query.lat).toFixed(2);
+  let lon = parseFloat(req.query.lon).toFixed(2);
+  console.log(searchQuery,lat,lon);
+  if (lat&&lon&&searchQuery){
+    if(searchQuery!=='Paris' 
+    && searchQuery!=='Seattle'
+    && searchQuery!=='Amman' ){
+      res.status(400).send('please provide correct city');
+    }
+    let result=[];
+    weatherData.find(item=>{
+      if(item.city_name===searchQuery && item.lat===lat && item.lon===lon ){
+        result.push(item);
+      }
+     
+    });
+    let city=result[0];
+    if (result.length>0){
+      let foreCast=city.data.map(item=>{
+        return {
+          date:item.datetime,
+          description:item.weather.description
+        };
+      });
+      res.status(200).json(foreCast);
+    }else{
+      res.status(500).send('resources not found');
+    }
+
+  }else{
+    res.status(500).send('please provide correct query params');
+  }
+
+});
+
+app.listen(PORT, () => {
+  console.log(`Listening on port ${PORT}`);
+});
