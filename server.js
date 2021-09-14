@@ -1,76 +1,46 @@
 'use strict';
-const express = require('express');
-const app = express();
-
-const cors = require('cors');
-app.use(cors());
-
+const express=require('express');
+const app=express();
+const cors=require('cors');
+const axios=require('axios');
 require('dotenv').config();
+app.use(cors());
+const PORT=process.env.PORT;
 
-const weatherData = require('./data/weather.json');
-const PORT = process.env.PORT;
-
-app.get('/', (req, res) => {
-
-  res.status(200).send('Working');
+app.get('/',(req,res)=>{
+  res.status(200).json({'message':'I\'m working'});
 });
 
-// app.get('/data',(req,res)=>{
-//   let city=weatherData[2];
-//   let forecastDays=city.data.map(day=>{
-//     return {
-//       date:day.valid_date,
-//       description:day.weather.description
-//     };
-//   });
-//   let customRespone={
-//     forecast:forecastDays,
-//     city_name:city.city_name
-//   };
-//   res.status(200).json(customRespone);
-// });
-
-app.get('/weather', (req, res) => {
-  
-  let searchQuery = req.query.searchQuery ;
-  let lat =parseFloat(req.query.lat).toFixed(2);
-  let lon =parseFloat(req.query.lon).toFixed(2);
-  console.log(searchQuery,lat,lon);
-  if (lat&&lon&&searchQuery){
-    if(searchQuery.toLowerCase()!=='paris'
-    && searchQuery.toLowerCase()!=='seattle'
-    && searchQuery.toLowerCase()!=='amman' ){
-      res.status(500).send('please provide correct city');
-    }
-    let result=[];
-    weatherData.find(item=>{
-      // console.log(item.city_name,item.lat,item.lon);
-      if(item.city_name.toLowerCase()===searchQuery.toLowerCase() || item.lat===lat && item.lon===lon ){
-        result.push(item);
-      }
+let handleWeather= async (req,res)=>{
+  let lat =req.query.lat;
+  let lon =req.query.lon;
+  console.log('hi');
+  let url=`https://api.weatherbit.io/v2.0/forecast/daily?lat=${lat}&lon=${lon}&key=${process.env.WEATHER_API_KEY}`;
+  console.log(url);
+  let axiosResponse= await axios.get(url);
+  let weatherData=axiosResponse.data;
+  console.log('razan'+ weatherData);
+  let cleanedData=weatherData.data.map(item=>{
+    return new ForeCast(item.datetime,item.weather.description);
+  });
+  res.status(200).json(cleanedData);
+};
+if(app.get('/weather',handleWeather)){
+  console.log('Status:200 - working fine');
+}
+else{
+  console.log('Status:500 - data not retrieve');
+}
 
 
-    });
-    console.log(result);
-    let city=result[0];
-    if (result.length>0){
-      let foreCast=city.data.map(item=>{
-        return {
-          date:item.datetime,
-          description:item.weather.description
-        };
-      });
-      res.status(200).json(foreCast);
-    }else{
-      res.status(500).send('resources not found');
-    }
+app.listen(PORT,()=>{
+  console.log(`listening to port ${PORT}`);
+});
 
-  }else{
-    res.status(500).send('please provide correct query params');
+// Model
+class ForeCast{
+  constructor(date,description){
+    this.date=date;
+    this.description=description;
   }
-
-});
-
-app.listen(PORT, () => {
-  console.log(`Listening on port ${PORT}`);
-});
+}
