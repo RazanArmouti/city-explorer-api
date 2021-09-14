@@ -31,23 +31,27 @@ app.get('/', (req, res) => {
 // });
 
 app.get('/weather', (req, res) => {
-  let searchQuery = req.query.searchQuery;
-  let lat = parseFloat(req.query.lat).toFixed(2);
-  let lon = parseFloat(req.query.lon).toFixed(2);
+  
+  let searchQuery = req.query.searchQuery ;
+  let lat =parseFloat(req.query.lat).toFixed(2);
+  let lon =parseFloat(req.query.lon).toFixed(2);
   console.log(searchQuery,lat,lon);
   if (lat&&lon&&searchQuery){
-    if(searchQuery!=='Paris' 
-    && searchQuery!=='Seattle'
-    && searchQuery!=='Amman' ){
-      res.status(400).send('please provide correct city');
+    if(searchQuery.toLowerCase()!=='paris'
+    && searchQuery.toLowerCase()!=='seattle'
+    && searchQuery.toLowerCase()!=='amman' ){
+      res.status(500).send('please provide correct city');
     }
     let result=[];
     weatherData.find(item=>{
-      if(item.city_name===searchQuery && item.lat===lat && item.lon===lon ){
+      // console.log(item.city_name,item.lat,item.lon);
+      if(item.city_name.toLowerCase()===searchQuery.toLowerCase() || item.lat===lat && item.lon===lon ){
         result.push(item);
       }
-     
+
+
     });
+    console.log(result);
     let city=result[0];
     if (result.length>0){
       let foreCast=city.data.map(item=>{
