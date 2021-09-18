@@ -21,8 +21,8 @@ const MovieController = async (req, res) => {
       let cleanedData = MovieData.data.results.map(movie =>{
         return new MovieModel(movie.title,
           movie.overview,
-          movie.average_votes,
-          movie.total_votes,
+          movie.vote_average,
+          movie.vote_count,
           `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
           //
           movie.popularity,
@@ -33,6 +33,8 @@ const MovieController = async (req, res) => {
       console.log(cleanedData);
       cache[cityNameMovies] = cleanedData;
       res.status(200).json(cleanedData);
+    }).catch(error => {
+      res.send(error);
     });
   }
 };
