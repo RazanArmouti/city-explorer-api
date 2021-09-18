@@ -28,7 +28,7 @@ the query parameters should be send within the frontend application
 [Live URL](https://city-explorer-api-lab.netlify.app/)
 
 
-### Feature #1: Custom Servers with Node and Express
+## Feature #1: Custom Servers with Node and Express
 * Number and name of feature: Feature #1: Custom Servers with Node and Express
 * Estimate of time needed to complete: 5:00
 
@@ -37,6 +37,37 @@ the query parameters should be send within the frontend application
 * Finish time: 2:30am
 
 * Actual time needed to complete:10 hours
+
+## Feature #2: APIs
+* Number and name of feature: Feature #2: APIs
+* Estimate of time needed to complete: 5:00
+
+* Start time: 8pm
+
+* Finish time: 2:30am
+
+* Actual time needed to complete:7 hours
+
+## Feature #3: Refactoring into Modules
+* Number and name of feature: Feature #3:Refactoring into Modules
+* Estimate of time needed to complete: 5:00
+
+* Start time: 6pm
+
+* Finish time: 10pm
+
+* Actual time needed to complete:5 hours
+
+## Feature #4: Advanced Topics
+* Number and name of feature: Feature #4:Advanced Topics
+* Estimate of time needed to complete: 5:00
+
+* Start time: 6pm
+
+* Finish time: 1am
+
+* Actual time needed to complete:5 hours
+
 
 # Data flow
 ![dataflow](./dataflow.png)
